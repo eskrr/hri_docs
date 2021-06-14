@@ -1,6 +1,6 @@
 # User manual
 
-![HRI System diagram](/images/system.png "HRI System diagram")
+![HRI System diagram](../images/system.png "HRI System diagram")
 
 The system is composed of the following sections:
 
@@ -19,7 +19,7 @@ The system is composed of the following sections:
 This module is implemented using a React JS. The UI is quite simple, it consists of a series of modular components. A component purpose is to display data from the robot in a user friendly way.
 
 <div class="text-center" id="img_1_0">
-  <img alt="Main UI view" class="text-center mb-2" src="/images/ui.png">
+  <img alt="Main UI view" class="text-center mb-2" src="../images/ui.png">
   <p class="small">Image 1.0 Main UI view</p class="small">
 </div>
 
@@ -41,7 +41,7 @@ In the configuration drawer the user can perform the following actions:
 * [Edit a configuration](#edit-a-configuration)
 
 <div class="text-center" id="img_1_1">
-  <img alt="Configuration Drawer" class="text-center mb-2" src="/images/configuration_drawer.png">
+  <img alt="Configuration Drawer" class="text-center mb-2" src="../images/configuration_drawer.png">
   <p class="small">Image 1.1 Configuration Drawer</p class="small">
 </div>
 
@@ -56,7 +56,7 @@ To activate or deactivate a module the user has to check the respective checkbox
 In the configuration drawer ([Image 1.1](#img_1_1)) the user can find a dropdown menu button, when collapsed will display a series of options ([Image 1.2](#img_1_2)).
 
 <div class="text-center" id="img_1_2">
-  <img alt="Configuration Selection" class="text-center mb-2" src="/images/configuration_selection.png">
+  <img alt="Configuration Selection" class="text-center mb-2" src="../images/configuration_selection.png">
   <p class="small">Image 1.2 Configuration Selection</p class="small">
 </div>
 
@@ -67,7 +67,7 @@ When the user selects a configuration the GUI will refresh and display the modul
 #### Create a configuration
 
 <div class="text-center" id="img_1_3">
-  <img alt="Create a configuration" class="text-center mb-2" src="/images/create_configuration.png">
+  <img alt="Create a configuration" class="text-center mb-2" src="../images/create_configuration.png">
   <p class="small">Image 1.3 Create a configuration</p class="small">
 </div>
 
@@ -151,7 +151,7 @@ The following components are currently implemented:
 
 The robot face is an interactive set of eyes (Image 1.6) that display emotions, this can be used as a way to interact with the robot that is familiar to humans. 
 
-![Neutral Robot Face](/images/neutral_face.png "Neutral Robot Face")
+![Neutral Robot Face](../images/neutral_face.png "Neutral Robot Face")
 <p class="text-center small">Image 1.4 Neutral Robot Face</p>
 
 The code can be found [here](https://github.com/AYM1607/AtHomeHRI/tree/main/src/components/RobotFace).
@@ -164,19 +164,19 @@ The face can display the following emotions:
 * Focused
 * Confused
 
-![Happy Robot Face](/images/happy_face.png "Happy Robot Face")
+![Happy Robot Face](../images/happy_face.png "Happy Robot Face")
 <p class="text-center small">Image 1.5 Happy Robot Face</p>
 
-![Sad Robot Face](/images/sad_face.png "Sad Robot Face")
+![Sad Robot Face](../images/sad_face.png "Sad Robot Face")
 <p class="text-center small">Image 1.6 Sad Robot Face</p>
 
-![Angry Robot Face](/images/angry_face.png "Angry Robot Face")
+![Angry Robot Face](../images/angry_face.png "Angry Robot Face")
 <p class="text-center small">Image 1.7 Angry Robot Face</p>
 
-![Focused Robot Face](/images/focused_face.png "Focused Robot Face")
+![Focused Robot Face](../images/focused_face.png "Focused Robot Face")
 <p class="text-center small">Image 1.8 Focused Robot Face</p>
 
-![Confused Robot Face](/images/confused_face.png "Confused Robot Face")
+![Confused Robot Face](../images/confused_face.png "Confused Robot Face")
 <p class="text-center small">Image 1.9 Confused Robot Face</p>
 
 The idea is that the user defines the emotion response depending on what the robot is doing. The component receives the emotion through a socket using a hook:
@@ -205,7 +205,7 @@ stop: The robot will stop blinking
 ##### Camera Feed
 
 <div class="text-center">
-	<img alt="Camera Feed component" class="text-center mb-2" src="/images/camera_feed.png">
+	<img alt="Camera Feed component" class="text-center mb-2" src="../images/camera_feed.png">
 	<p class="small">Image 2.0 Camera Feed Component</p class="small">
 </div>
 
@@ -237,7 +237,7 @@ Then it is displayed in the HTML content of the component:
 This component displays data about system health from the robot.
 
 <div class="text-center" id="img_1_x">
-	<img alt="System Health Component" class="text-center mb-2" src="/images/system_health.png">
+	<img alt="System Health Component" class="text-center mb-2" src="../images/system_health.png">
 	<p class="small">Image 2.1 System Health Component</p class="small">
 </div>
 
@@ -291,7 +291,7 @@ return (
 This component was implemented using [React Chatbox component](https://www.npmjs.com/package/react-chatbox-component), its functionality is to send and receive text messages to or from the robot.
 
 <div class="text-center">
-	<img alt="Robot Chat component" class="text-center mb-2" src="/images/robot_chat.png">
+	<img alt="Robot Chat component" class="text-center mb-2" src="../images/robot_chat.png">
 	<p class="small">Image 2.2 Robot Chat component</p class="small">
 </div>
 
@@ -354,7 +354,7 @@ This input can be used as raw input for the robot.
 This component displays which modules from the robot are currently active.
 
 <div class="text-center">
-	<img alt="Active Robot Modules component" class="text-center mb-2" src="/images/active_robot_modules.png">
+	<img alt="Active Robot Modules component" class="text-center mb-2" src="../images/active_robot_modules.png">
 	<p class="small">Image 2.3 Active Robot Modules component</p class="small">
 </div>
 

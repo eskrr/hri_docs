@@ -2,7 +2,7 @@
 <ul class="summary">
 {% if nav|length>1 %}
     {% for nav_item in nav %}
-        <li class="{% if nav_item.active%}current{% endif %}">
+        <li class="large {% if nav_item.active%}current{% endif %}">
             <a href="{{ nav_item.url|url }}">{{ nav_item.title }}</a>
         </li>
     {% endfor %}

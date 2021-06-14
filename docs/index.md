@@ -41,7 +41,7 @@ The interface is to be run in one of the computers that forms the robot’s comp
 Figure 2 shows the main and only page of the interface which is divided into different and independent UI modules. Each module is responsible for receiving information from the web server and displaying it when new updates are available. Each module occupies a flexible amount of screen size and is placed on a flowing grid that allows an arbitrary number of elements to be placed comfortably on the available space.
 
 <div class="text-center" id="img_2">
-  <img alt="Main UI view" class="text-center mb-2" src="images/system.png">
+  <img alt="Main UI view" class="text-center mb-2" src="images/ui_2.png">
   <p class="small">Figure 2. Interface with all the current modules active.</p class="small">
 </div>
 

@@ -1,0 +1,19 @@
+<nav role="navigation">
+<ul class="summary">
+{% for toc_item in page.toc %}
+    <li class="chapter"><a href="{{ toc_item.url }}">{{ toc_item.title }}</a></li>
+    {% for toc_item in toc_item.children %}
+        <li class="chapter" style="padding-left: 20px"><a href="{{ toc_item.url }}">{{ toc_item.title }}</a></li>
+        {% for toc_item in toc_item.children %}
+        	<li class="chapter" style="padding-left: 40px"><a href="{{ toc_item.url }}">{{ toc_item.title }}</a></li>
+	        {% for toc_item in toc_item.children %}
+	        	<li class="chapter" style="padding-left: 60px"><a href="{{ toc_item.url }}">{{ toc_item.title }}</a></li>
+		        {% for toc_item in toc_item.children %}
+		        	<li class="chapter" style="padding-left: 80px"><a href="{{ toc_item.url }}">{{ toc_item.title }}</a></li>
+		    	{% endfor %}
+	    	{% endfor %}
+    	{% endfor %}
+    {% endfor %}
+{% endfor %}
+</ul>
+</nav>

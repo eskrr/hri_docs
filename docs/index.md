@@ -1,555 +1,286 @@
 # @Home HRI
 
-![HRI System diagram](images/system.png "HRI System diagram")
+## Abstract
 
-The system is composed of the following sections:
+Roborregos is the official robotics team of Tec de Monterrey, Monterrey campus. The @Home project consists of the development of a service robot for the home. An HRI (Human Robot Interaction) system allows the operators and developers of the robot to interact with it, both by providing manual inputs and receiving feedback. The purpose of this project is to develop an HRI that allows close introspection of the current @Home robot’s sub-systems and good architecture modularity in case sub-systems are added or modified in the future.
 
-* **HRI sub-system:** This is what will be covered in this docs.
-	* **1. React Web App:** Front end were data received from the robot is displayed in a user friendly way.
-	* **2. Flask API:** Intermediary between ROS Nodes and React Frontend.
-	* **3. ROS Node:** ROS Node that subscribes to topics that publish robot data.
-* **Other robot nodes:** These nodes are part of the system of the robot. E.g:
-	* Main engine node
-	* Navigation Node
-	* Speech node
-* **Test publisher:** This component consists of a node publishing mock data for the ROS Node Listener to receive.
+## Introduction
 
-## React Web App
+The term robot has been around for a long time and even though the definition applies to both physical things and abstract mechanisms that exist only in software, the general public associates the word robot with a machine, and generally, it is also associated with an industrial setting. This might have been true in the past but with the massive adoption of innovation by the public and the rapid technology advancements of the recent decades, the technologies that have made robots useful for the industry are being applied to commercial and residential use cases.
 
-This module is implemented using a React JS. The UI is quite simple, it consists of a series of modular components. A component purpose is to display data from the robot in a user friendly way.
+The International Organization for Standardization (ISO) defines “service robots” as “robots that perform useful tasks for humans or equipment, but not for industrial automation applications”. Service robots are very useful when you want to guarantee consistency in a task that involves humans. Humans can react to external factors in many different ways and consistency is hard to achieve, this is especially true in mundane jobs that are highly repetitive (Karunasena et al, 2021.).
 
-<div class="text-center" id="img_1_0">
-  <img alt="Main UI view" class="text-center mb-2" src="images/ui.png">
-  <p class="small">Image 1.0 Main UI view</p class="small">
+As robots moved from an industrial setting to performing tasks that are useful to humans, a necessity arose to include social interaction capabilities. If a robot cannot be accepted and be proficient in social scenarios it would be really difficult for them to be useful in applications involving humans. Humans are used to heads being the focal point when interacting with other humans, thus it is expected from robots to possess a responsive social interface to act as this focal point (McGinn, 2019).
+
+This project aims to create that interaction focal point while at the same time providing all the features necessary to monitor the robot during contests and development/debugging.
+
+
+## Development
+
+The current version of the @Home software is developed using ROS as an overarching framework and both C++ and Python as languages for the individual subsystems. As previously stated, the HRI interface must be able to have deep introspection of the robot subsystems, this means that at least one of the components must run within the ROS environment or have access to the streams of information generated in it. As we’ll see in the next section, this requirement led us to divide the HRI subsystem in several independent parts and deal with the challenges that this brought.
+
+### System Architecture
+
+The system is composed of 3 independent components: An interface developed as a web application, a web server from which the interface retrieves the information to show and finally a ROS node that collects the data from the other subsystems and acts as a database for the web server. Figure 1 shows a high level overview of this architecture and how the communication between them is performed.
+
+There’s two main communication scenarios that are showcased with the arrows: from any of the submodules of the robot to the HRI interface, or from the interface to one of the submodules. For the first case, the interface receives each and every message through the use of web sockets, for the second case, the interface sends messages through standard HTTP requests. In any of the two scenarios, the web server establishes communication with the HRI ROS node through the use of Listener and Client primitives that are implemented in the multiprocessing standard Python library, this provides process-to-process communication with built-in serialization using TCP/IP as the underlying protocols. The communications between the HRI ROS node and any other nodes that host different subsystems is done through ROS primitives, meaning using standard or custom ROS messages and by publishing to predefined topics.
+
+<div class="text-center" id="img_1">
+  <img alt="Main UI view" class="text-center mb-2" src="images/system.png">
+  <p class="small">Figure 1. High level HRI system architecture</p class="small">
 </div>
 
-In the green enclosed area of [Image 1.0](#img_1_0) the user can find example of components:
+The reason why the web app interface has to be separate from the other components is fairly obvious, the fact that it is built with a library meant to create SPAs (Single Page Applications) means that it’s supposed to be served independently from the API. However, this does not explain why the web server (the API) has to be a separate process from the ROS node.
 
-* Camera Feed
-* System Health
-* Active Robot Modules
+Both of the components that were just mentioned were written in Python because of its ease of use and our previous familiarity with the language; Python is an interpreted language with dynamic typing which comes with its own set of pros and cons. An interpreted language, as opposed to a compiled language, is not directly executed by the CPU, instead it is either converted to an intermediate representation or kept the same, but in both cases it is executed by an interpreter which is also sometimes called a VM (virtual machine). With all of this said, the root cause of the separation is a mechanism of the Python interpreter called GIL (Global Interpreter Lock) which only allows the code of one thread to be executed concurrently; If ROS and Flask (the framework used to develop the web server) used the same concurrency model it probably wouldn’t have been a problem. However, ROS uses multithreading for concurrency while Flask and almost all other web frameworks for Python use an event loop; these models clash and thus have to be isolated in different processes.
 
-In the pink enclosed area of [Image 1.0](#img_1_0) the user can find a button to open the [Configuration Drawer](#configuration-drawer).
+### Web application interface
 
-### Configuration Drawer
+The interface is to be run in one of the computers that forms the robot’s computing cluster, most likely running linux; any technology that allows building user interfaces and communication with a web server could suffice. We went with web technologies because of its portability which would allow us to run it in any other machine should it or its operating system change in the future; specifically, we opted to use ReactJS because of its simplicity and wide adoption in the community.
 
-In the configuration drawer the user can perform the following actions:
+Figure 2 shows the main and only page of the interface which is divided into different and independent UI modules. Each module is responsible for receiving information from the web server and displaying it when new updates are available. Each module occupies a flexible amount of screen size and is placed on a flowing grid that allows an arbitrary number of elements to be placed comfortably on the available space.
 
-* [Activating components](#activating-components)
-* [Select a configuration](#select-a-configuration)
-* [Create a configuration](#create-a-configuration)
-* [Edit a configuration](#edit-a-configuration)
-
-<div class="text-center" id="img_1_1">
-  <img alt="Configuration Drawer" class="text-center mb-2" src="images/configuration_drawer.png">
-  <p class="small">Image 1.1 Configuration Drawer</p class="small">
+<div class="text-center" id="img_2">
+  <img alt="Main UI view" class="text-center mb-2" src="images/system.png">
+  <p class="small">Figure 2. Interface with all the current modules active.</p class="small">
 </div>
 
-#### Activating components
+The current modules and their corresponding functionalities are listed in the table below. It is worth noting that the ability to easily add future modules is one of the core principles that guided the design of this system, meaning this table should grow easily as the needs of the operators and/or developers change.
 
-In the collapsed drawer that can be seen in [Image 1.1](#img_1_1), the user can find a checkbox for each [implemented component](#examples). All components that are checked are displayed in the GUI.
-
-To activate or deactivate a module the user has to check the respective checkbox.
-
-#### Select a configuration
-
-In the configuration drawer ([Image 1.1](#img_1_1)) the user can find a dropdown menu button, when collapsed will display a series of options ([Image 1.2](#img_1_2)).
-
-<div class="text-center" id="img_1_2">
-  <img alt="Configuration Selection" class="text-center mb-2" src="images/configuration_selection.png">
-  <p class="small">Image 1.2 Configuration Selection</p class="small">
+| Name                 | Functionality                                                                                                                                                    | Communication direction    |
+|----------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------|----------------------------|
+| Robot Face           | Emotionally reflect the actions that the robot is performing.                                                                                                    | From ROS to the interface. |
+| Video feed           | Show a direct or manipulated (labels, bounding boxes, etc.) feed of video.                                                                                       | From ROS to the interface. |
+| System health        | Show the system status of the computing unit in the cluster that is running the interface. This could be extended to show the status of all the computing units. | From ROS to the interface. |
+| Active robot modules | Show which of the robot modules are currently doing processing.                                                                                                  | From ROS to the interface. |
+| Robot Chat           | Show a log of the text-to-speech messages the robot has emitted. Send custom commands bypassing the speech-to-text module.                                       | Both ways.                 |
+| Stop button          | Send a signal to the robot in case a manual stop is required.                                                                                                    | From the Interface to ROS. |
+<div class="text-center" id="img_3">
+  <p class="small">Table 1. UI modules of the HRI interface..</p class="small">
 </div>
 
-In the dropdown content displayed in [Image 1.2](!img_1_2) the user can find a list of current available configurations, [the user can create configurations](#create-a-configuration).
+<div class="text-center" id="img_3">
+  <img alt="Main UI view" class="text-center mb-2" src="images/configuration_drawer.png">
+  <p class="small">Figure 3. Interface drawer.</p class="small">
+</div>
 
-When the user selects a configuration the GUI will refresh and display the modules that are part of the selected configuration.
+Table 1 shows all the available modules and while all of them can certainly be on the screen at the same time, there’s no need to have them all; figure 3 shows the system drawer that slides open when the bottom right button shown in figure 2 is pressed. The drawer allows you to select the modules that you wish to see on the main screen as well as creating new profiles or selecting existing ones; a profile is a locally saved configuration that groups several modules together, meaning, when a profile is selected all the modules it groups are shown on the interface while the ones it doesn’t group are hidden.
 
-#### Create a configuration
+<div class="text-center" id="img_4">
+  <img alt="Main UI view" class="text-center mb-2" src="images/configuration_selection.png">
+  <p class="small">Figure 4. Profile selection UI.</p class="small">
+</div>
 
-<div class="text-center" id="img_1_3">
-  <img alt="Create a configuration" class="text-center mb-2" src="images/create_configuration.png">
-  <p class="small">Image 1.3 Create a configuration</p class="small">
+Figure 4 shows the UI that can be used to select one of the existing profiles; the interaction is really simple, the dropdown is clicked and when the profile is selected, only the UI modules corresponding to it are shown. When the Add config button is clicked, the modal shown in figure 5 is shown.
+
+<div class="text-center" id="img_5">
+  <img alt="Main UI view" class="text-center mb-2" src="images/create_configuration.png">
+  <p class="small">Figure 5. Profile creation UI.</p class="small">
+</div>
+
+The process to create a profile is very simple: First a name is chosen and then the modules that the profile is going to group  must be selected, all or none modules can be selected without any limitations.
+
+### Web server
+
+As mentioned previously, the web server is written in python and uses Flask as the framework of choice. It has a direct connection with the ROS node which can be observed in figure 6.
+
+<!-- Figure 6 -->
+```python
+# Full duplex connection with the HRI ros node.
+receiver_address = ('localhost', 7000)
+sender_address = ('localhost', 7001)
+```
+<div class="text-center" id="img_6">
+  <p class="small">Figure 6. Variables definition for full duplex communication from the server side.</p class="small">
+</div>
+
+To establish a full duplex (or bidirectional) communication with the ros node we have to have both a sender and a receiver and that’s precisely what is showcased in figure 6. The port used for the ROS receiver is 7000 while the port for the sender is 7001, both of these are ports in the local network, meaning in the same compute unit of the robot’s cluster.
+
+Table 1 also shows that the stop button requires communication from the interface to the ROS subsystems and for this, the communication has to go through the web server in which HTTP is used. Figure 7 shows the route definition that provides the stop functionality. The interface sends a post request to the /stop endpoint and the web server uses the sender (which previously went through an initialization process) to tell the ros node to shut itself down.
+
+<!-- Figure 7 -->
+```python
+@app.route("/stop", methods=["POST"])
+def stop_robot():
+    global ros_sender
+    ros_sender.send("shutdown")
+    return jsonify({"message": "Robot was shutdown"})
+```
+<div class="text-center" id="img_7">
+  <p class="small">Figure 7. Endpoint definition for the stop button.
+</p class="small">
+</div>
+
+The other purpose of the web server is message forwarding in the opposite direction, meaning from the ROS subsystems to the interface. This is a well defined task that is performed in the function ros_receive_handler which is showcased in figure 8; the function runs as a task that is dispatched to the event loop (the concurrency models were explained previously). Since the ROS receiver is not initialized immediately, there’s a mechanism against lockup that allows all events running in the loop to progress. The important part of this definition is the else clause of the inner if statement: Whenever the web server receives a message from the ROS node, it analyzes is content and in particular, when a certain format is followed, the web socket channel and the value to be sent are extracted and then emitted through the socket itself.
+
+<!-- Figure 8 -->
+```python
+# Decode messages and send them to the appropriate socket channel.
+def ros_receive_handler():
+    while True:
+        if ros_receiver is None:
+            # Avoid blocking the process before initialization.
+            socketio.sleep(0.01)
+            continue
+        # Only call `recv` when we're sure there's a new message since
+        # it is a blocking call.
+        if ros_receiver.poll():
+            try:
+                message = ros_receiver.recv()
+            except:
+                # Ignore message if there was an exception.
+                # TODO: We should not do this becuase we could
+                # loose critical messages.
+                rospy.loginfo("There was an exception")
+                continue
+
+            if message == "CreateSender":
+                initialize_ros_sender()
+            elif message == "Close":
+                cleanup()
+            else:
+                channel = message["channel"]
+                value = message["value"]
+                socketio.emit(
+                    channel,
+                    value if type(value) == str else json.dumps(value)
+                )
+        else:
+            # Only throttle if there are no available messages.
+            socketio.sleep(0.01)
+```
+<div class="text-center" id="img_8">
+  <p class="small">Figure 8. Definition of the event forwarding mechanism. 
+</p class="small">
+</div>
+
+### ROS Node
+
+As previously mentioned, the role of the ROS node is to compile the information coming from the subsystems and make it easily available to the interface through the web server. In this node we also need the implementation of the full duplex communication; figure 9 shows that the definition is exactly the same, as are the ports to be used, the difference is that from the ROS side, the ports are interchanged: Port 7000 for the server is the receiver while in ROS is the sender; port 7001 for the server is the sender while in ROS is the receiver.
+
+<!-- Figure 9 -->
+```python
+# Implement a full duplex connection with the flask server.
+sender_address = ('localhost', 7000)
+receiver_address = ('localhost', 7001)
+```
+<div class="text-center" id="img_9">
+  <p class="small">Figure 9. Variables definition for full duplex communication from the ROS side.
+</p class="small">
+</div>
+
+Similar to the server process, the ROS node has a message handler for anything that’s coming from the web server that needs to be handled; for the current implementation, the only event that is handled by ROS coming from the server is shutdown. The implementation for this handler is shown in figure 10, as opposed to the server, the concurrency model in ROS is multithreaded and thus, flask_receive_handler is scheduled as a thread.
+
+<!-- Figure 10 -->
+```python
+def flask_receive_handler():
+    while True:
+        if server_receiver is None:
+            # Don't block execution.
+            time.sleep(0.01)
+            continue
+        if server_receiver.poll():
+            try:
+                message = server_receiver.recv()
+                if message == "shutdown":
+                    rospy.loginfo("Stopping system")
+                rospy.loginfo(message)
+            except:
+                break
+        # Don't block execution.
+        time.sleep(.01)
+```
+<div class="text-center" id="img_10">
+  <p class="small">Figure 10. Message handler definition for messages going from the server to ROS.</p class="small">
+</div>
+
+The types of messages that the interface currently handles could be classified in two: Robot status and video feed. The video feed is easily represented by a series of Image ROS messages; the definition for such messages is exported by the sensor_msgs package which is widely used by the community. In the case of robot status we created a custom message that encodes all the information needed by the interface (other than images), this definition is shown in figure 11.
+
+<!-- Figure 11 -->
+```
+Header header
+string[] ActionQueue
+float32[3] SystemHealth
+string RobotStatus
+string[] ActiveModules
+string RobotMessage
+string RobotFace
+```
+<div class="text-center" id="img_11">
+  <p class="small">Figure 11. Definition for the RobotStatus custom message.</p class="small">
+</div>
+
+As it has been previously mentioned, other than from the server, the ROS node must receive messages from several robot subsystems, and this is done differently for the two discussed cases (status or video). Figure 12 shows how the messages regarding status are handled, which if we analyze it carefully, is a simple forward: We extract the information from the RobotStatus message and send it to the web server. This function is used as the callback of a ROS subscription for the /robo_info topic, which internally is launched as a separate thread.
+
+
+```python
+def robot_info_receive_handler(robot_status):
+    if server_sender is not None:
+        for channel in channels:
+            try:
+                server_sender.send({
+                    "channel": channel,
+                    "value": getattr(robot_status, channel)
+                })
+            except:
+                print("Error fetching: ", channel)
+
+
+...
+
+channels = [
+    "ActionQueue",
+    "SystemHealth",
+    "RobotStatus",
+    "ActiveModules",
+    "RobotMessage",
+    "RobotFace"
+]
+
+```
+<!-- Figure 12 -->
+<div class="text-center" id="img_12">
+  <p class="small">Figure 12. Message handler for robot status</p class="small">
+</div>
+
+The process for the camera feed is very similar, in this case the topic used is /robot_video_feed but there’s some data transformation required before being forwarded to the server, all of this is showcased in figure 13. Originally, the stream arrives as Image messages but has to be encoded as base64; any and all messages sent to the interface through the web sockets must be in string form, either JSON encoded or as plain string data. Base 64 was chosen because browsers support it directly, that is to say, if we can send images as base64 encoded binaries, the browser that is rendering the interface can show them without any conversion. Luckily, OpenCV (which is already used in the robot) has built-in functions to obtain the binary value of an image which can in turn be encoded using Python standard libraries.
+
+<!-- Figure 13 -->
+```python
+def robot_video_feed_receive_handler(image_msg):
+    if server_sender is not None:
+        img = bridge.imgmsg_to_cv2(image_msg, desired_encoding="passthrough")
+        _, img_buffer = cv2.imencode('.jpg', img)
+        img_text = base64.b64encode(img_buffer)
+        server_sender.send({
+            "channel": "CameraFeed",
+            "value": img_text.decode("ascii")
+        })
+```
+<div class="text-center" id="img_13">
+  <p class="small">Figure 13. Message handler for the camera feed.
+</p class="small">
 </div>
 
 
-At the bottom of the dropdown content ([Image 1.2](#img_1_2)) displays a button for adding a config, when clicked a modal with a form for creating a config will be displayed ([Image 1.3](#img_1_3)).
+## Future work
 
-Provide a name for the configuration and check the modules that are part of the configuration and then click the create button.
+The present work has shown the architecture and implementation of an interface that serves as a proof of concept that such systems can be built and also as a first functional implementation, this because most of the requirements of the development team were met, at least referring to the interface. The future work for the HRI system is very clear: Integrate the interface with the ROS subsystems that can make use of it, specifically, create internal tasks in the nodes so they can send information they see fit to either the /robot_inf or /robot_video_feed topics.
 
-After this the new configuration will be [available for selection](#select-a-configuration).
+Additionally, new UI modules can be added to the interface as needs arise. However, this requires a complete process involving all 3 of the modules. Future iterations of the interface could make the process to add modules easier or even automated through manual scripts or code generation techniques.
 
-### Edit a configuration
+## Conclusion
 
-When a configuration is selected it can be edited by modifying the activated modules. As we can observe in [Image 1.1](#img_1_1) the current configuration is Mariano and it has 3 active modules, by checking/unchecking modules the user can modify the configuration.
+We believe that the way in which we interact with technology and in this case, how we interact with robots, will be a very big research and development area in the future. Although there are multiple classes of robots that can benefit from a better or more robust interaction, the service robot category will certainly receive more attention since there’s still a lot to improve. The purpose of this project was to prove that these types of systems can be built with current technology, for the case of the @Home robot this meant using ROS, Python and web technologies. With a few hiccups along the way, we ended up with a functional first version that paves the way for future development by the end users themselves (the Roborregos team). While the work performed here showcases a very small part of the problems to be solved in this discipline (integration of current technologies), it sets the precedents for future development and showcases the importance of having a system of such kind.
 
-When the user is done modifying the configuration it can be saved by clicking the Save button enclosed by the configuration selection dropdown ([Image 1.1](#img_1_1)). After clicking the configuration will be updated.
+## References
 
-### Components
+Karunasena, Ramesha et al. “DEVI: Open-Source Human-Robot Interface for Interactive Receptionist Systems.” 2019 IEEE 4th International Conference on Advanced Robotics and Mechatronics (ICARM) (2019): n. pag. Crossref. Web.
 
-In the [main UI view](#img_1_0) the user can find examples of components.
+McGinn, Conor. “Why Do Robots Need a Head? The Role of Social Interfaces on Service Robots.” International Journal of Social Robotics, vol. 12, no. 1, 2020, p. 281. EBSCOhost, doi:10.1007/s12369-019-00564-5.
 
-A component must have an specific purpose, [examples](#examples) are:
+Iocchi, L. (. 1. )., et al. “RoboCup@Home: Analysis and Results of Evolving Competitions for Domestic and Service Robots.” Artificial Intelligence, vol. 229, pp. 258–281. EBSCOhost, doi:10.1016/j.artint.2015.08.002. Accessed 10 June 2021.
 
-* [Camera Feed](#camera-feed): Displays camera feed received from the robot.
-* [System Health](#system-health): Displays information about battery, cpu and ram usage.
-* [Active Robot Modules](#active-robot-modules): Displays current active robot modules.
+Stalljann, Sarah et al. “Performance Analysis of a Head and Eye Motion-Based Control Interface for Assistive Robots.” Sensors 20.24 (2020): 7162. Crossref. Web.
 
-The following code is how a template component template looks like:
-
-
-```js
-import { Box, Text } from "@chakra-ui/layout";
-import React, { useState, useEffect } from "react";
-import { socket } from "../services/socketConnection";
-
-export default function ComponentTemplate() {
-  // State variables used for component with initial state as null.
-  const [var, setVar] = useState(null);
-
-  // Use effect for receiving robot socket messages.
-  useEffect(() => {
-    socket.on("ComponentTemplate", setVar);
-    return () => socket.off("ComponentTemplate");
-  }, []);
-
-  return (
-    <Box shadow="lg" p="4" borderRadius="lg" maxW="600px">
-      <Text fontSize="2xl" mb="4">
-        Hello World! {var}
-      </Text>
-    </Box>
-  );
-}
-```
-
-***The purpose of a component is to display information received from the robot in a user friendly way. Because of this, it is essential to establish a communication channel with the robot.***
-
-Components are stored in [this directory](https://github.com/AYM1607/AtHomeHRI/tree/main/src/components).
-
-The code underlined in green defines a state variable, the useState method returns a variable and a function call to set the variable, when this function is called the component will render again showing changes made by the variable.
-This variable purpose is to contain the information that is going to be displayed in the component.
-(More about react state variables at: https://es.reactjs.org/docs/hooks-state.html )
-
-The code underlined in yellow uses a useEffect hook, that is going to execute the code block every time a message is received through the socket, this socket is used to receive messages from the Flask API.
-(More about react use effect hook at: https://es.reactjs.org/docs/hooks-effect.html )
-
-The code underlined in blue defines the content of the component using JSX, the example shows a simple Hello World. Note that the var can be used in the content to display the information.
-(More about jsx at: https://es.reactjs.org/docs/introducing-jsx.html )
-
-
-#### Examples
-
-The following components are currently implemented:
-
-* Robot Face
-* Camera Feed
-* System Health
-* Robot Chat
-* Active Robot Modules
-
-##### RobotFace
-
-The robot face is an interactive set of eyes (Image 1.6) that display emotions, this can be used as a way to interact with the robot that is familiar to humans. 
-
-![Neutral Robot Face](images/neutral_face.png "Neutral Robot Face")
-<p class="text-center small">Image 1.4 Neutral Robot Face</p>
-
-The code can be found [here](https://github.com/AYM1607/AtHomeHRI/tree/main/src/components/RobotFace).
-
-The face can display the following emotions:
-
-* Happy
-* Sad
-* Angry
-* Focused
-* Confused
-
-![Happy Robot Face](images/happy_face.png "Happy Robot Face")
-<p class="text-center small">Image 1.5 Happy Robot Face</p>
-
-![Sad Robot Face](images/sad_face.png "Sad Robot Face")
-<p class="text-center small">Image 1.6 Sad Robot Face</p>
-
-![Angry Robot Face](images/angry_face.png "Angry Robot Face")
-<p class="text-center small">Image 1.7 Angry Robot Face</p>
-
-![Focused Robot Face](images/focused_face.png "Focused Robot Face")
-<p class="text-center small">Image 1.8 Focused Robot Face</p>
-
-![Confused Robot Face](images/confused_face.png "Confused Robot Face")
-<p class="text-center small">Image 1.9 Confused Robot Face</p>
-
-The idea is that the user defines the emotion response depending on what the robot is doing. The component receives the emotion through a socket using a hook:
-
-```js 
-  useEffect(() => {
-    socket.on("RobotFace", setEmotion);
-    return () => socket.off("RobotFace");
-  }, []);
-```
-
-For example:
-
-* **Confused:** This emotion can be sent to the component when the Robot did not understand an instruction.
-* **Focused:** This emotion can be sent when the Robot understands the current instruction.
-* **Angry:** This emotion can be sent when the Robot bumped into an obstacle.
-* **Happy:** This emotion can be sent when the Robot receives a compliment.
-
-Essentially the user defines what situations correspond to an emotion, this is sent from a ROS Node which is then read by the Flask API, this API ultimately sends it to the UI via sockets.
-This is a great tool for debug, because it is very simple to understand and is user defined.
-
-It also supports two more settings:
-start: The robot will start blinking
-stop: The robot will stop blinking
-
-##### Camera Feed
-
-<div class="text-center">
-	<img alt="Camera Feed component" class="text-center mb-2" src="images/camera_feed.png">
-	<p class="small">Image 2.0 Camera Feed Component</p class="small">
-</div>
-
-This component displays the camera feed that the robot sends through the system.
-The code can be found [here](https://github.com/AYM1607/AtHomeHRI/blob/main/src/components/CameraFeed.js).
-
-The image is received through the socket:
-```js
-  useEffect(() => {
-    socket.on("CameraFeed", setImage);
-    return () => socket.off("CameraFeed");
-  }, []);
-```
-
-Then it is displayed in the HTML content of the component: 
-```js
-  return (
-    <Box shadow="lg" p="4" borderRadius="lg" maxW="600px">
-      <Text fontSize="2xl" mb="4">
-        Camera feed
-      </Text>
-      {image && <img src={`data:image/jpg;base64,${image}`} />}
-    </Box>
-  );
-```
-
-##### System Health
-
-This component displays data about system health from the robot.
-
-<div class="text-center" id="img_1_x">
-	<img alt="System Health Component" class="text-center mb-2" src="images/system_health.png">
-	<p class="small">Image 2.1 System Health Component</p class="small">
-</div>
-
-For now it displays the following information:
-
-* Battery
-* CPU
-* RAM
-
-More types of data can be added, the code can be found [here](https://github.com/AYM1607/AtHomeHRI/blob/main/src/components/SystemHealthModule.js).
-
-The data is received from the robot:
-
-```js
-  useEffect(() => {
-    socket.on(SocketChannels.SYSTEM_HEALTH, (data) =>
-      setSystemHealth(JSON.parse(data))
-    );
-    return () => socket.off(SocketChannels.ACTIVE_MODULES);
-  }, []);
-```
-
-And then it is used to display it a user friendly way:
-
-```js
-return (
-    <Box shadow="lg" p="4" borderRadius="lg" maxW="600px">
-      <Text fontSize="2xl" mb="4">
-        System Health
-      </Text>
-      <VStack divider={<StackDivider borderColor="gray" />} alignItems="start">
-        <Box>
-          <Icon boxSize="1.5em" mr="5" as={FaBatteryFull} /> Battery:{" "}
-          {parseInt(systemHealth[0])}%
-        </Box>
-        <Box>
-          <Icon boxSize="1.5em" mr="5" as={FaPercentage} /> CPU:{" "}
-          {parseInt(systemHealth[1])}%
-        </Box>
-        <Box>
-          <Icon boxSize="1.5em" mr="5" as={FaMicrochip} /> RAM:{" "}
-          {parseInt(systemHealth[2])}%
-        </Box>
-      </VStack>
-    </Box>
-    );
-```
-
-##### Robot Chat
-
-This component was implemented using [React Chatbox component](https://www.npmjs.com/package/react-chatbox-component), its functionality is to send and receive text messages to or from the robot.
-
-<div class="text-center">
-	<img alt="Robot Chat component" class="text-center mb-2" src="images/robot_chat.png">
-	<p class="small">Image 2.2 Robot Chat component</p class="small">
-</div>
-
-Message history is stored in the browser local storage.
-
-Messages are received from the robot through the socket:
-
-```js
-  useEffect(() => {
-    socket.on("RobotMessage", setNewMessage);
-    return () => socket.off("RobotMessage");
-  }, []);
-
-  const storedMessages = getLocalStorageRobotChat();
-
-  if (newMessage != null && !messageExists(newMessage.id, storedMessages)) {
-    console.log("New Message: ", newMessage);
-
-    storedMessages.push(newMessage);
-    setLocalStorageRobotChat(storedMessages);
-  }
-```
-
-When a message is received it is verified that it hasn't been received yet, then it is stored in the history and the Chatbox component renders all messages:
-
-```js
-  return (
-    <Box borderRadius="lg" p="4" shadow="lg" w="600px">
-      <Text fontSize="2xl" mb="4">
-        Robot messages
-      </Text>
-      <ChatBox messages={storedMessages} user={user} onSubmit={sendMessage} />
-    </Box>
-  );
-```
-
-When the user sends a message using the Chatbox component, this message is stored in the history and then it can be sent to the robot using the HRI system by sending a POST request to the Flask API.
-This input can be used as raw input for the robot.
-
-```js
-  function sendMessage(message) {
-    const newMessage = {
-      text: message,
-      id: uuidv4(),
-      sender: {
-        uid: user.uid,
-        avatar: "https://img.icons8.com/cotton/2x/gender-neutral-user--v2.png",
-      },
-    };
-
-    // TODO: Add post to python API that communicates with ROS Node
-    // to send instruction.
-
-    setNewMessage(newMessage);
-  }
-```
-
-##### Active Robot Modules
-
-This component displays which modules from the robot are currently active.
-
-<div class="text-center">
-	<img alt="Active Robot Modules component" class="text-center mb-2" src="images/active_robot_modules.png">
-	<p class="small">Image 2.3 Active Robot Modules component</p class="small">
-</div>
-
-The code can be found [here](https://github.com/AYM1607/AtHomeHRI/blob/main/src/components/RobotModulesModule.js).
-
-The data is received from the robot through the socket:
-
-```js
-  useEffect(() => {
-    socket.on(SocketChannels.ACTIVE_MODULES, (data) =>
-      setActiveRobotModules(JSON.parse(data))
-    );
-    return () => socket.off(SocketChannels.ACTIVE_MODULES);
-  }, []);
-```
-
-Then the data is displayed in a friendly way:
-
-```js
-  return (
-    <Box shadow="lg" p="4" borderRadius="lg" maxW="600px">
-      <Text fontSize="2xl" mb="4">
-        Active robot modules
-      </Text>
-      <VStack divider={<StackDivider borderColor="gray" />} alignItems="start">
-        {Object.values(RobotModule).map((robotModule) => {
-          const active = activeRobotModulesMap[robotModule];
-          return (
-            <Box key={robotModule} color={active ? "green" : "gray"}>
-              {active ? (
-                <Icon as={FaCheckCircle} />
-              ) : (
-                <Icon as={FaTimesCircle} />
-              )}{" "}
-              {mapRobotModuleToName(robotModule)}
-            </Box>
-          );
-        })}
-      </VStack>
-    </Box>
-  );
-```
-
-#### Creating a component
-
-Creating a component is possible by following two simple steps:
-
-* Adding a template
-* Adding mapping methods and includes
-
-Note that following these steps will only implement the component in the Web App (frontend). It is still necessary to implement the backend part, this consists of data collection and sending.
-
-##### Adding a template
-
-This step consists of adding the component React JSX file under [this directory](https://github.com/AYM1607/AtHomeHRI/tree/main/src/components).
-
-A barebone component looks like this:
-
-```js
-import { Box, Text } from "@chakra-ui/layout";
-import React, { useState, useEffect } from "react";
-import { socket } from "../services/socketConnection";
-
-export default function ComponentTemplate() {
-  // State variables used for component with initial state as null.
-  const [variable, setVariable] = useState(null);
-
-  // Use effect for receiving robot socket messages.
-  useEffect(() => {
-    socket.on("ComponentTemplate", setVariable);
-    return () => socket.off("ComponentTemplate");
-  }, []);
-
-  return (
-    <Box shadow="lg" p="4" borderRadius="lg" maxW="600px">
-      <Text fontSize="2xl" mb="4">
-        Hello World! {variable}
-      </Text>
-    </Box>
-  );
-}
-```
-
-*ComponentTemplate* has to be substituted with the name of your component.
-
-Setup receiving messages through the socket in the appropiate channel (backend sending messages still has to be implemented):
-```js
-  // Use effect for receiving robot socket messages.
-  useEffect(() => {
-    socket.on("ComponentTemplate", setVar);
-    return () => socket.off("ComponentTemplate");
-  }, []);
-```
-
-And then design the structure of the component:
-
-```js
-  return (
-    <Box shadow="lg" p="4" borderRadius="lg" maxW="600px">
-      <Text fontSize="2xl" mb="4">
-        Hello World! {variable}
-      </Text>
-    </Box>
-  );
-```
-
-##### Adding mapping methods and includes
-
-For the component to display in the UI and configuration drawer it has to included in couple of files.
-
-All components are refered to using an enum called [ModuleIdentifier](https://github.com/AYM1607/AtHomeHRI/blob/main/src/lib/enums.js#L1).
-
-The component name has to be added the following way:
-
-```js
-export const ModuleIdentifier = {
-  FACE: "face_module",
-  CAMERA: "camera_module",
-  SYSTEM_HEALTH: "system_health_module",
-  ROBOT_MODULES: "robot_modules",
-  CHAT: "chat_module",
-  NEW_COMPONENT_NAME: "new_component_name"
-};
-```
-
-In the [util library](https://github.com/AYM1607/AtHomeHRI/blob/main/src/lib/util.js) are located a couple of methods that provide the interface to display components in the UI.
-
-In this file we have to include our component template:
-```js
-import CameraFeed from "../components/CameraFeed";
-import RobotChat from "../components/RobotChat";
-import RobotFace from "../components/RobotFace/RobotFace";
-import SystemHealthModule from "../components/SystemHealthModule";
-import RobotModulesModule from "../components/RobotModulesModule";
-import NewComponentName from "../components/NewComponentName";
-```
-
-Inside this library we can find two methods mapping methods that we have to add our new component:
-
-###### **[mapModuleIdToComponent](https://github.com/AYM1607/AtHomeHRI/blob/main/src/lib/util.js#L10)**
-
-This method maps the module Id (enum value) to the React component, the component has to be added the following way:
-
-```js
-export function mapModuleIdToComponent(moduleId) {
-  switch (moduleId) {
-    case ModuleIdentifier.CAMERA:
-      return <CameraFeed />;
-    case ModuleIdentifier.CHAT:
-      return <RobotChat />;
-    case ModuleIdentifier.FACE:
-      return <RobotFace />;
-    case ModuleIdentifier.SYSTEM_HEALTH:
-      // TODO: implement system health.
-      return <SystemHealthModule />;
-    case ModuleIdentifier.NEW_COMPONENT_NAME:
-      return <NewComponentName />;
-    case ModuleIdentifier.ROBOT_MODULE
-    default:
-      // Return an empty div if the value is not recognized.
-      return <div />;
-  }
-}
-```
-
-If the module id is not handled an empty div will be returned.
-
-###### **[mapModuleIdToName](https://github.com/AYM1607/AtHomeHRI/blob/main/src/lib/util.js#L29)**
-
-
-This method is for displaying the name of the component in the UI, it maps the module id to the name.
-
-The component has to be added the following way:
-
-```js
-export function mapModuleIdToName(moduleId) {
-  switch (moduleId) {
-    case ModuleIdentifier.CAMERA:
-      return "Camera feed";
-    case ModuleIdentifier.CHAT:
-      return "Robot chat";
-    case ModuleIdentifier.FACE:
-      return "Face";
-    case ModuleIdentifier.SYSTEM_HEALTH:
-      return "System health";
-    case ModuleIdentifier.NEW_COMPONENT_NAME:
-      return "NewComponentName";
-    default:
-      return "Unknown module";
-  }
-}
-```
-
-If the module id is not handled "Unknown module" will be shown as name.
-
-## Flask API
-
-## ROS Node
+Chen, Mingxuan, et al. “A Human–robot Interface for Mobile Manipulator.” Intelligent Service Robotics, vol. 11, no. 3, 2018, p. 269. EBSCOhost, doi:10.1007/s11370-018-0251-3.

@@ -1,0 +1,880 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+<title>User manual - HRI User Docs</title>
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+<meta name="generator" content="mkdocs-1.2.1, mkdocs-gitbook-">
+
+<link rel="shortcut icon" href="../images/favicon.ico" type="image/x-icon">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.0.1/highlight.min.js"></script>
+<meta name="HandheldFriendly" content="true"/>
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<meta rel="next" href="" />
+<link href="../css/style.min.css" rel="stylesheet"> 
+</head>
+
+<body>
+<div class="book">
+<div class="book-summary">
+
+<!--
+<div id="book-search-input" role="search">
+<input type="text" placeholder="Type to search" />
+</div> -->
+
+<nav role="navigation">
+<ul class="summary">
+
+    
+        <li class="">
+            <a href="..">@Home HRI</a>
+        </li>
+    
+        <li class="current">
+            <a href="./">User manual</a>
+        </li>
+    
+
+<li class="divider"></li>
+
+    <li class="chapter"><a href="#user-manual">User manual</a></li>
+    
+        <li class="chapter" style="padding-left: 20px"><a href="#react-web-app">React Web App</a></li>
+        
+        	<li class="chapter" style="padding-left: 40px"><a href="#configuration-drawer">Configuration Drawer</a></li>
+	        
+	        	<li class="chapter" style="padding-left: 60px"><a href="#activating-components">Activating components</a></li>
+		        
+	    	
+	        	<li class="chapter" style="padding-left: 60px"><a href="#select-a-configuration">Select a configuration</a></li>
+		        
+	    	
+	        	<li class="chapter" style="padding-left: 60px"><a href="#create-a-configuration">Create a configuration</a></li>
+		        
+	    	
+    	
+        	<li class="chapter" style="padding-left: 40px"><a href="#edit-a-configuration">Edit a configuration</a></li>
+	        
+    	
+        	<li class="chapter" style="padding-left: 40px"><a href="#components">Components</a></li>
+	        
+	        	<li class="chapter" style="padding-left: 60px"><a href="#examples">Examples</a></li>
+		        
+		        	<li class="chapter" style="padding-left: 80px"><a href="#robotface">RobotFace</a></li>
+		    	
+		        	<li class="chapter" style="padding-left: 80px"><a href="#camera-feed">Camera Feed</a></li>
+		    	
+		        	<li class="chapter" style="padding-left: 80px"><a href="#system-health">System Health</a></li>
+		    	
+		        	<li class="chapter" style="padding-left: 80px"><a href="#robot-chat">Robot Chat</a></li>
+		    	
+		        	<li class="chapter" style="padding-left: 80px"><a href="#active-robot-modules">Active Robot Modules</a></li>
+		    	
+	    	
+	        	<li class="chapter" style="padding-left: 60px"><a href="#creating-a-component">Creating a component</a></li>
+		        
+		        	<li class="chapter" style="padding-left: 80px"><a href="#adding-a-template">Adding a template</a></li>
+		    	
+		        	<li class="chapter" style="padding-left: 80px"><a href="#adding-mapping-methods-and-includes">Adding mapping methods and includes</a></li>
+		    	
+	    	
+    	
+    
+        <li class="chapter" style="padding-left: 20px"><a href="#flask-api">Flask API</a></li>
+        
+        	<li class="chapter" style="padding-left: 40px"><a href="#sockets">Sockets</a></li>
+	        
+    	
+        	<li class="chapter" style="padding-left: 40px"><a href="#web-endpoints">Web endpoints</a></li>
+	        
+    	
+        	<li class="chapter" style="padding-left: 40px"><a href="#connection-to-ros-node">Connection to ROS Node</a></li>
+	        
+    	
+    
+        <li class="chapter" style="padding-left: 20px"><a href="#ros-node">ROS Node</a></li>
+        
+        	<li class="chapter" style="padding-left: 40px"><a href="#robot-info">Robot Info</a></li>
+	        
+    	
+        	<li class="chapter" style="padding-left: 40px"><a href="#robot-video-feed">Robot Video Feed</a></li>
+	        
+    	
+        	<li class="chapter" style="padding-left: 40px"><a href="#test-node-publisher">Test Node Publisher</a></li>
+	        
+	        	<li class="chapter" style="padding-left: 60px"><a href="#robot-info_1">Robot Info</a></li>
+		        
+	    	
+	        	<li class="chapter" style="padding-left: 60px"><a href="#robot-video-feed_1">Robot Video Feed</a></li>
+		        
+	    	
+    	
+        	<li class="chapter" style="padding-left: 40px"><a href="#implementing-new-component-backend">Implementing new component backend</a></li>
+	        
+    	
+    
+
+</ul>
+</nav>
+
+</div> <!-- end of book-summary -->
+
+<div class="book-body">
+<div class="body-inner">
+<div class="book-header" role="navigation">
+
+<!-- Title -->
+<h1>
+<i class="fa fa-circle-o-notch fa-spin"></i>
+<a href="." ></a>
+</h1>
+
+</div> <!-- end of book-header -->
+
+<div class="page-wrapper" tabindex="-1" role="main">
+<div class="page-inner">
+<div id="book-search-results">
+<div class="search-noresults">
+
+<section class="normal markdown-section">
+
+
+
+<h1 id="user-manual">User manual</h1>
+<p><img alt="HRI System diagram" src="../images/system.png" title="HRI System diagram" /></p>
+<p>The system is composed of the following sections:</p>
+<ul>
+<li><strong>HRI sub-system:</strong> This is what will be covered in this docs.<ul>
+<li><strong>1. React Web App:</strong> Front end were data received from the robot is displayed in a user friendly way.</li>
+<li><strong>2. Flask API:</strong> Intermediary between ROS Nodes and React Frontend.</li>
+<li><strong>3. ROS Node:</strong> ROS Node that subscribes to topics that publish robot data.</li>
+</ul>
+</li>
+<li><strong>Other robot nodes:</strong> These nodes are part of the system of the robot. E.g:<ul>
+<li>Main engine node</li>
+<li>Navigation Node</li>
+<li>Speech node</li>
+</ul>
+</li>
+<li><strong>Test publisher:</strong> This component consists of a node publishing mock data for the ROS Node Listener to receive.</li>
+</ul>
+<h2 id="react-web-app">React Web App</h2>
+<p>This module is implemented using a React JS. The UI is quite simple, it consists of a series of modular components. A component purpose is to display data from the robot in a user friendly way.</p>
+<div class="text-center" id="img_1_0">
+  <img alt="Main UI view" class="text-center mb-2" src="images/ui.png">
+  <p class="small">Image 1.0 Main UI view</p class="small">
+</div>
+
+<p>In the green enclosed area of <a href="#img_1_0">Image 1.0</a> the user can find example of components:</p>
+<ul>
+<li>Camera Feed</li>
+<li>System Health</li>
+<li>Active Robot Modules</li>
+</ul>
+<p>In the pink enclosed area of <a href="#img_1_0">Image 1.0</a> the user can find a button to open the <a href="#configuration-drawer">Configuration Drawer</a>.</p>
+<h3 id="configuration-drawer">Configuration Drawer</h3>
+<p>In the configuration drawer the user can perform the following actions:</p>
+<ul>
+<li><a href="#activating-components">Activating components</a></li>
+<li><a href="#select-a-configuration">Select a configuration</a></li>
+<li><a href="#create-a-configuration">Create a configuration</a></li>
+<li><a href="#edit-a-configuration">Edit a configuration</a></li>
+</ul>
+<div class="text-center" id="img_1_1">
+  <img alt="Configuration Drawer" class="text-center mb-2" src="images/configuration_drawer.png">
+  <p class="small">Image 1.1 Configuration Drawer</p class="small">
+</div>
+
+<h4 id="activating-components">Activating components</h4>
+<p>In the collapsed drawer that can be seen in <a href="#img_1_1">Image 1.1</a>, the user can find a checkbox for each <a href="#examples">implemented component</a>. All components that are checked are displayed in the GUI.</p>
+<p>To activate or deactivate a module the user has to check the respective checkbox.</p>
+<h4 id="select-a-configuration">Select a configuration</h4>
+<p>In the configuration drawer (<a href="#img_1_1">Image 1.1</a>) the user can find a dropdown menu button, when collapsed will display a series of options (<a href="#img_1_2">Image 1.2</a>).</p>
+<div class="text-center" id="img_1_2">
+  <img alt="Configuration Selection" class="text-center mb-2" src="images/configuration_selection.png">
+  <p class="small">Image 1.2 Configuration Selection</p class="small">
+</div>
+
+<p>In the dropdown content displayed in <a href="!img_1_2">Image 1.2</a> the user can find a list of current available configurations, <a href="#create-a-configuration">the user can create configurations</a>.</p>
+<p>When the user selects a configuration the GUI will refresh and display the modules that are part of the selected configuration.</p>
+<h4 id="create-a-configuration">Create a configuration</h4>
+<div class="text-center" id="img_1_3">
+  <img alt="Create a configuration" class="text-center mb-2" src="images/create_configuration.png">
+  <p class="small">Image 1.3 Create a configuration</p class="small">
+</div>
+
+<p>At the bottom of the dropdown content (<a href="#img_1_2">Image 1.2</a>) displays a button for adding a config, when clicked a modal with a form for creating a config will be displayed (<a href="#img_1_3">Image 1.3</a>).</p>
+<p>Provide a name for the configuration and check the modules that are part of the configuration and then click the create button.</p>
+<p>After this the new configuration will be <a href="#select-a-configuration">available for selection</a>.</p>
+<h3 id="edit-a-configuration">Edit a configuration</h3>
+<p>When a configuration is selected it can be edited by modifying the activated modules. As we can observe in <a href="#img_1_1">Image 1.1</a> the current configuration is Mariano and it has 3 active modules, by checking/unchecking modules the user can modify the configuration.</p>
+<p>When the user is done modifying the configuration it can be saved by clicking the Save button enclosed by the configuration selection dropdown (<a href="#img_1_1">Image 1.1</a>). After clicking the configuration will be updated.</p>
+<h3 id="components">Components</h3>
+<p>In the <a href="#img_1_0">main UI view</a> the user can find examples of components.</p>
+<p>A component must have an specific purpose, <a href="#examples">examples</a> are:</p>
+<ul>
+<li><a href="#camera-feed">Camera Feed</a>: Displays camera feed received from the robot.</li>
+<li><a href="#system-health">System Health</a>: Displays information about battery, cpu and ram usage.</li>
+<li><a href="#active-robot-modules">Active Robot Modules</a>: Displays current active robot modules.</li>
+</ul>
+<p>The following code is how a template component template looks like:</p>
+<pre><code class="language-js">import { Box, Text } from &quot;@chakra-ui/layout&quot;;
+import React, { useState, useEffect } from &quot;react&quot;;
+import { socket } from &quot;../services/socketConnection&quot;;
+
+export default function ComponentTemplate() {
+  // State variables used for component with initial state as null.
+  const [var, setVar] = useState(null);
+
+  // Use effect for receiving robot socket messages.
+  useEffect(() =&gt; {
+    socket.on(&quot;ComponentTemplate&quot;, setVar);
+    return () =&gt; socket.off(&quot;ComponentTemplate&quot;);
+  }, []);
+
+  return (
+    &lt;Box shadow=&quot;lg&quot; p=&quot;4&quot; borderRadius=&quot;lg&quot; maxW=&quot;600px&quot;&gt;
+      &lt;Text fontSize=&quot;2xl&quot; mb=&quot;4&quot;&gt;
+        Hello World! {var}
+      &lt;/Text&gt;
+    &lt;/Box&gt;
+  );
+}
+</code></pre>
+<p><strong><em>The purpose of a component is to display information received from the robot in a user friendly way. Because of this, it is essential to establish a communication channel with the robot.</em></strong></p>
+<p>Components are stored in <a href="https://github.com/AYM1607/AtHomeHRI/tree/main/src/components">this directory</a>.</p>
+<p>The code underlined in green defines a state variable, the useState method returns a variable and a function call to set the variable, when this function is called the component will render again showing changes made by the variable.
+This variable purpose is to contain the information that is going to be displayed in the component.
+(More about react state variables at: https://es.reactjs.org/docs/hooks-state.html )</p>
+<p>The code underlined in yellow uses a useEffect hook, that is going to execute the code block every time a message is received through the socket, this socket is used to receive messages from the Flask API.
+(More about react use effect hook at: https://es.reactjs.org/docs/hooks-effect.html )</p>
+<p>The code underlined in blue defines the content of the component using JSX, the example shows a simple Hello World. Note that the var can be used in the content to display the information.
+(More about jsx at: https://es.reactjs.org/docs/introducing-jsx.html )</p>
+<h4 id="examples">Examples</h4>
+<p>The following components are currently implemented:</p>
+<ul>
+<li>Robot Face</li>
+<li>Camera Feed</li>
+<li>System Health</li>
+<li>Robot Chat</li>
+<li>Active Robot Modules</li>
+</ul>
+<h5 id="robotface">RobotFace</h5>
+<p>The robot face is an interactive set of eyes (Image 1.6) that display emotions, this can be used as a way to interact with the robot that is familiar to humans. </p>
+<p><img alt="Neutral Robot Face" src="../images/neutral_face.png" title="Neutral Robot Face" /></p>
+<p class="text-center small">Image 1.4 Neutral Robot Face</p>
+
+<p>The code can be found <a href="https://github.com/AYM1607/AtHomeHRI/tree/main/src/components/RobotFace">here</a>.</p>
+<p>The face can display the following emotions:</p>
+<ul>
+<li>Happy</li>
+<li>Sad</li>
+<li>Angry</li>
+<li>Focused</li>
+<li>Confused</li>
+</ul>
+<p><img alt="Happy Robot Face" src="../images/happy_face.png" title="Happy Robot Face" /></p>
+<p class="text-center small">Image 1.5 Happy Robot Face</p>
+
+<p><img alt="Sad Robot Face" src="../images/sad_face.png" title="Sad Robot Face" /></p>
+<p class="text-center small">Image 1.6 Sad Robot Face</p>
+
+<p><img alt="Angry Robot Face" src="../images/angry_face.png" title="Angry Robot Face" /></p>
+<p class="text-center small">Image 1.7 Angry Robot Face</p>
+
+<p><img alt="Focused Robot Face" src="../images/focused_face.png" title="Focused Robot Face" /></p>
+<p class="text-center small">Image 1.8 Focused Robot Face</p>
+
+<p><img alt="Confused Robot Face" src="../images/confused_face.png" title="Confused Robot Face" /></p>
+<p class="text-center small">Image 1.9 Confused Robot Face</p>
+
+<p>The idea is that the user defines the emotion response depending on what the robot is doing. The component receives the emotion through a socket using a hook:</p>
+<pre><code class="language-js">  useEffect(() =&gt; {
+    socket.on(&quot;RobotFace&quot;, setEmotion);
+    return () =&gt; socket.off(&quot;RobotFace&quot;);
+  }, []);
+</code></pre>
+<p>For example:</p>
+<ul>
+<li><strong>Confused:</strong> This emotion can be sent to the component when the Robot did not understand an instruction.</li>
+<li><strong>Focused:</strong> This emotion can be sent when the Robot understands the current instruction.</li>
+<li><strong>Angry:</strong> This emotion can be sent when the Robot bumped into an obstacle.</li>
+<li><strong>Happy:</strong> This emotion can be sent when the Robot receives a compliment.</li>
+</ul>
+<p>Essentially the user defines what situations correspond to an emotion, this is sent from a ROS Node which is then read by the Flask API, this API ultimately sends it to the UI via sockets.
+This is a great tool for debug, because it is very simple to understand and is user defined.</p>
+<p>It also supports two more settings:
+start: The robot will start blinking
+stop: The robot will stop blinking</p>
+<h5 id="camera-feed">Camera Feed</h5>
+<div class="text-center">
+    <img alt="Camera Feed component" class="text-center mb-2" src="images/camera_feed.png">
+    <p class="small">Image 2.0 Camera Feed Component</p class="small">
+</div>
+
+<p>This component displays the camera feed that the robot sends through the system.
+The code can be found <a href="https://github.com/AYM1607/AtHomeHRI/blob/main/src/components/CameraFeed.js">here</a>.</p>
+<p>The image is received through the socket:</p>
+<pre><code class="language-js">  useEffect(() =&gt; {
+    socket.on(&quot;CameraFeed&quot;, setImage);
+    return () =&gt; socket.off(&quot;CameraFeed&quot;);
+  }, []);
+</code></pre>
+<p>Then it is displayed in the HTML content of the component: </p>
+<pre><code class="language-js">  return (
+    &lt;Box shadow=&quot;lg&quot; p=&quot;4&quot; borderRadius=&quot;lg&quot; maxW=&quot;600px&quot;&gt;
+      &lt;Text fontSize=&quot;2xl&quot; mb=&quot;4&quot;&gt;
+        Camera feed
+      &lt;/Text&gt;
+      {image &amp;&amp; &lt;img src={`data:image/jpg;base64,${image}`} /&gt;}
+    &lt;/Box&gt;
+  );
+</code></pre>
+<h5 id="system-health">System Health</h5>
+<p>This component displays data about system health from the robot.</p>
+<div class="text-center" id="img_1_x">
+    <img alt="System Health Component" class="text-center mb-2" src="images/system_health.png">
+    <p class="small">Image 2.1 System Health Component</p class="small">
+</div>
+
+<p>For now it displays the following information:</p>
+<ul>
+<li>Battery</li>
+<li>CPU</li>
+<li>RAM</li>
+</ul>
+<p>More types of data can be added, the code can be found <a href="https://github.com/AYM1607/AtHomeHRI/blob/main/src/components/SystemHealthModule.js">here</a>.</p>
+<p>The data is received from the robot:</p>
+<pre><code class="language-js">  useEffect(() =&gt; {
+    socket.on(SocketChannels.SYSTEM_HEALTH, (data) =&gt;
+      setSystemHealth(JSON.parse(data))
+    );
+    return () =&gt; socket.off(SocketChannels.ACTIVE_MODULES);
+  }, []);
+</code></pre>
+<p>And then it is used to display it a user friendly way:</p>
+<pre><code class="language-js">return (
+    &lt;Box shadow=&quot;lg&quot; p=&quot;4&quot; borderRadius=&quot;lg&quot; maxW=&quot;600px&quot;&gt;
+      &lt;Text fontSize=&quot;2xl&quot; mb=&quot;4&quot;&gt;
+        System Health
+      &lt;/Text&gt;
+      &lt;VStack divider={&lt;StackDivider borderColor=&quot;gray&quot; /&gt;} alignItems=&quot;start&quot;&gt;
+        &lt;Box&gt;
+          &lt;Icon boxSize=&quot;1.5em&quot; mr=&quot;5&quot; as={FaBatteryFull} /&gt; Battery:{&quot; &quot;}
+          {parseInt(systemHealth[0])}%
+        &lt;/Box&gt;
+        &lt;Box&gt;
+          &lt;Icon boxSize=&quot;1.5em&quot; mr=&quot;5&quot; as={FaPercentage} /&gt; CPU:{&quot; &quot;}
+          {parseInt(systemHealth[1])}%
+        &lt;/Box&gt;
+        &lt;Box&gt;
+          &lt;Icon boxSize=&quot;1.5em&quot; mr=&quot;5&quot; as={FaMicrochip} /&gt; RAM:{&quot; &quot;}
+          {parseInt(systemHealth[2])}%
+        &lt;/Box&gt;
+      &lt;/VStack&gt;
+    &lt;/Box&gt;
+    );
+</code></pre>
+<h5 id="robot-chat">Robot Chat</h5>
+<p>This component was implemented using <a href="https://www.npmjs.com/package/react-chatbox-component">React Chatbox component</a>, its functionality is to send and receive text messages to or from the robot.</p>
+<div class="text-center">
+    <img alt="Robot Chat component" class="text-center mb-2" src="images/robot_chat.png">
+    <p class="small">Image 2.2 Robot Chat component</p class="small">
+</div>
+
+<p>Message history is stored in the browser local storage.</p>
+<p>Messages are received from the robot through the socket:</p>
+<pre><code class="language-js">  useEffect(() =&gt; {
+    socket.on(&quot;RobotMessage&quot;, setNewMessage);
+    return () =&gt; socket.off(&quot;RobotMessage&quot;);
+  }, []);
+
+  const storedMessages = getLocalStorageRobotChat();
+
+  if (newMessage != null &amp;&amp; !messageExists(newMessage.id, storedMessages)) {
+    console.log(&quot;New Message: &quot;, newMessage);
+
+    storedMessages.push(newMessage);
+    setLocalStorageRobotChat(storedMessages);
+  }
+</code></pre>
+<p>When a message is received it is verified that it hasn't been received yet, then it is stored in the history and the Chatbox component renders all messages:</p>
+<pre><code class="language-js">  return (
+    &lt;Box borderRadius=&quot;lg&quot; p=&quot;4&quot; shadow=&quot;lg&quot; w=&quot;600px&quot;&gt;
+      &lt;Text fontSize=&quot;2xl&quot; mb=&quot;4&quot;&gt;
+        Robot messages
+      &lt;/Text&gt;
+      &lt;ChatBox messages={storedMessages} user={user} onSubmit={sendMessage} /&gt;
+    &lt;/Box&gt;
+  );
+</code></pre>
+<p>When the user sends a message using the Chatbox component, this message is stored in the history and then it can be sent to the robot using the HRI system by sending a POST request to the Flask API.
+This input can be used as raw input for the robot.</p>
+<pre><code class="language-js">  function sendMessage(message) {
+    const newMessage = {
+      text: message,
+      id: uuidv4(),
+      sender: {
+        uid: user.uid,
+        avatar: &quot;https://img.icons8.com/cotton/2x/gender-neutral-user--v2.png&quot;,
+      },
+    };
+
+    // TODO: Add post to python API that communicates with ROS Node
+    // to send instruction.
+
+    setNewMessage(newMessage);
+  }
+</code></pre>
+<h5 id="active-robot-modules">Active Robot Modules</h5>
+<p>This component displays which modules from the robot are currently active.</p>
+<div class="text-center">
+    <img alt="Active Robot Modules component" class="text-center mb-2" src="images/active_robot_modules.png">
+    <p class="small">Image 2.3 Active Robot Modules component</p class="small">
+</div>
+
+<p>The code can be found <a href="https://github.com/AYM1607/AtHomeHRI/blob/main/src/components/RobotModulesModule.js">here</a>.</p>
+<p>The data is received from the robot through the socket:</p>
+<pre><code class="language-js">  useEffect(() =&gt; {
+    socket.on(SocketChannels.ACTIVE_MODULES, (data) =&gt;
+      setActiveRobotModules(JSON.parse(data))
+    );
+    return () =&gt; socket.off(SocketChannels.ACTIVE_MODULES);
+  }, []);
+</code></pre>
+<p>Then the data is displayed in a friendly way:</p>
+<pre><code class="language-js">  return (
+    &lt;Box shadow=&quot;lg&quot; p=&quot;4&quot; borderRadius=&quot;lg&quot; maxW=&quot;600px&quot;&gt;
+      &lt;Text fontSize=&quot;2xl&quot; mb=&quot;4&quot;&gt;
+        Active robot modules
+      &lt;/Text&gt;
+      &lt;VStack divider={&lt;StackDivider borderColor=&quot;gray&quot; /&gt;} alignItems=&quot;start&quot;&gt;
+        {Object.values(RobotModule).map((robotModule) =&gt; {
+          const active = activeRobotModulesMap[robotModule];
+          return (
+            &lt;Box key={robotModule} color={active ? &quot;green&quot; : &quot;gray&quot;}&gt;
+              {active ? (
+                &lt;Icon as={FaCheckCircle} /&gt;
+              ) : (
+                &lt;Icon as={FaTimesCircle} /&gt;
+              )}{&quot; &quot;}
+              {mapRobotModuleToName(robotModule)}
+            &lt;/Box&gt;
+          );
+        })}
+      &lt;/VStack&gt;
+    &lt;/Box&gt;
+  );
+</code></pre>
+<h4 id="creating-a-component">Creating a component</h4>
+<p>Creating a component is possible by following two simple steps:</p>
+<ul>
+<li>Adding a template</li>
+<li>Adding mapping methods and includes</li>
+</ul>
+<p>Note that following these steps will only implement the component in the Web App (frontend). It is still necessary to implement the <a href="#implementing-new-component-backend">backend part</a>, this consists of data collection and sending.</p>
+<h5 id="adding-a-template">Adding a template</h5>
+<p>This step consists of adding the component React JSX file under <a href="https://github.com/AYM1607/AtHomeHRI/tree/main/src/components">this directory</a>.</p>
+<p>A barebone component looks like this:</p>
+<pre><code class="language-js">import { Box, Text } from &quot;@chakra-ui/layout&quot;;
+import React, { useState, useEffect } from &quot;react&quot;;
+import { socket } from &quot;../services/socketConnection&quot;;
+
+export default function ComponentTemplate() {
+  // State variables used for component with initial state as null.
+  const [variable, setVariable] = useState(null);
+
+  // Use effect for receiving robot socket messages.
+  useEffect(() =&gt; {
+    socket.on(&quot;ComponentTemplate&quot;, setVariable);
+    return () =&gt; socket.off(&quot;ComponentTemplate&quot;);
+  }, []);
+
+  return (
+    &lt;Box shadow=&quot;lg&quot; p=&quot;4&quot; borderRadius=&quot;lg&quot; maxW=&quot;600px&quot;&gt;
+      &lt;Text fontSize=&quot;2xl&quot; mb=&quot;4&quot;&gt;
+        Hello World! {variable}
+      &lt;/Text&gt;
+    &lt;/Box&gt;
+  );
+}
+</code></pre>
+<p><em>ComponentTemplate</em> has to be substituted with the name of your component.</p>
+<p>Setup receiving messages through the socket in the appropiate channel (backend sending messages still has to be implemented):</p>
+<pre><code class="language-js">  // Use effect for receiving robot socket messages.
+  useEffect(() =&gt; {
+    socket.on(&quot;ComponentTemplate&quot;, setVar);
+    return () =&gt; socket.off(&quot;ComponentTemplate&quot;);
+  }, []);
+</code></pre>
+<p>And then design the structure of the component:</p>
+<pre><code class="language-js">  return (
+    &lt;Box shadow=&quot;lg&quot; p=&quot;4&quot; borderRadius=&quot;lg&quot; maxW=&quot;600px&quot;&gt;
+      &lt;Text fontSize=&quot;2xl&quot; mb=&quot;4&quot;&gt;
+        Hello World! {variable}
+      &lt;/Text&gt;
+    &lt;/Box&gt;
+  );
+</code></pre>
+<h5 id="adding-mapping-methods-and-includes">Adding mapping methods and includes</h5>
+<p>For the component to display in the UI and configuration drawer it has to included in couple of files.</p>
+<p>All components are refered to using an enum called <a href="https://github.com/AYM1607/AtHomeHRI/blob/main/src/lib/enums.js#L1">ModuleIdentifier</a>.</p>
+<p>The component name has to be added the following way:</p>
+<pre><code class="language-js">export const ModuleIdentifier = {
+  FACE: &quot;face_module&quot;,
+  CAMERA: &quot;camera_module&quot;,
+  SYSTEM_HEALTH: &quot;system_health_module&quot;,
+  ROBOT_MODULES: &quot;robot_modules&quot;,
+  CHAT: &quot;chat_module&quot;,
+  NEW_COMPONENT_NAME: &quot;new_component_name&quot;
+};
+</code></pre>
+<p>In the <a href="https://github.com/AYM1607/AtHomeHRI/blob/main/src/lib/util.js">util library</a> are located a couple of methods that provide the interface to display components in the UI.</p>
+<p>In this file we have to include our component template:</p>
+<pre><code class="language-js">import CameraFeed from &quot;../components/CameraFeed&quot;;
+import RobotChat from &quot;../components/RobotChat&quot;;
+import RobotFace from &quot;../components/RobotFace/RobotFace&quot;;
+import SystemHealthModule from &quot;../components/SystemHealthModule&quot;;
+import RobotModulesModule from &quot;../components/RobotModulesModule&quot;;
+import NewComponentName from &quot;../components/NewComponentName&quot;;
+</code></pre>
+<p>Inside this library we can find two methods mapping methods that we have to add our new component:</p>
+<h6 id="mapmoduleidtocomponent"><strong><a href="https://github.com/AYM1607/AtHomeHRI/blob/main/src/lib/util.js#L10">mapModuleIdToComponent</a></strong></h6>
+<p>This method maps the module Id (enum value) to the React component, the component has to be added the following way:</p>
+<pre><code class="language-js">export function mapModuleIdToComponent(moduleId) {
+  switch (moduleId) {
+    case ModuleIdentifier.CAMERA:
+      return &lt;CameraFeed /&gt;;
+    case ModuleIdentifier.CHAT:
+      return &lt;RobotChat /&gt;;
+    case ModuleIdentifier.FACE:
+      return &lt;RobotFace /&gt;;
+    case ModuleIdentifier.SYSTEM_HEALTH:
+      // TODO: implement system health.
+      return &lt;SystemHealthModule /&gt;;
+    case ModuleIdentifier.NEW_COMPONENT_NAME:
+      return &lt;NewComponentName /&gt;;
+    case ModuleIdentifier.ROBOT_MODULE
+    default:
+      // Return an empty div if the value is not recognized.
+      return &lt;div /&gt;;
+  }
+}
+</code></pre>
+<p>If the module id is not handled an empty div will be returned.</p>
+<h6 id="mapmoduleidtoname"><strong><a href="https://github.com/AYM1607/AtHomeHRI/blob/main/src/lib/util.js#L29">mapModuleIdToName</a></strong></h6>
+<p>This method is for displaying the name of the component in the UI, it maps the module id to the name.</p>
+<p>The component has to be added the following way:</p>
+<pre><code class="language-js">export function mapModuleIdToName(moduleId) {
+  switch (moduleId) {
+    case ModuleIdentifier.CAMERA:
+      return &quot;Camera feed&quot;;
+    case ModuleIdentifier.CHAT:
+      return &quot;Robot chat&quot;;
+    case ModuleIdentifier.FACE:
+      return &quot;Face&quot;;
+    case ModuleIdentifier.SYSTEM_HEALTH:
+      return &quot;System health&quot;;
+    case ModuleIdentifier.NEW_COMPONENT_NAME:
+      return &quot;NewComponentName&quot;;
+    default:
+      return &quot;Unknown module&quot;;
+  }
+}
+</code></pre>
+<p>If the module id is not handled "Unknown module" will be shown as name.</p>
+<h2 id="flask-api">Flask API</h2>
+<p>The Flask API consists of the following modules:</p>
+<ul>
+<li><strong><a href="#sockets">Sockets</a>:</strong> SocketIO library is used to establish communication and send messages to the <a href="#react-web-app">React Web App</a></li>
+<li><strong><a href="#web-endpoints">Web endpoints</a>:</strong> This can be get or post depending on the needs and can be used to send messages from the <a href="#react-web-app">React Web App</a> to <a href="#ros-node">ROS Node</a></li>
+<li><strong><a href="#connection-to-ros-node">Connection to ROS Node</a>:</strong> Full duplex connection with <a href="#ros-node">ROS Node</a>.</li>
+</ul>
+<p>The code can be found <a href="https://github.com/RoBorregos/robocup-home/blob/feature/HRISetup/catkin_home/src/hri/scripts/flask_server.py">here</a>.</p>
+<p>This API works as intermediary between the frontend and backend because there is no direct way that both can communicate because of how ROS works.</p>
+<h3 id="sockets">Sockets</h3>
+<p>The purpose of this module is to send the collected data to the <a href="#react-web-app">React Web App</a>. The data is not created at this point, it is received from the ROS Node using the <a href="#connection-to-ros-node">TCP/IP server</a>.</p>
+<p>When data is <a href="https://github.com/RoBorregos/robocup-home/blob/feature/HRISetup/catkin_home/src/hri/scripts/flask_server.py#L41">received</a> it is only redirected to the frontend using SocketIO:</p>
+<pre><code class="language-python">    channel = message[&quot;channel&quot;]
+    value = message[&quot;value&quot;]
+    socketio.emit(
+        channel,
+        value if type(value) == str else json.dumps(value)
+    )
+</code></pre>
+<h3 id="web-endpoints">Web endpoints</h3>
+<p>A user can implement an endpoint in the flask server for receiving web data from the UI. e.g. the <a href="https://github.com/RoBorregos/robocup-home/blob/feature/HRISetup/catkin_home/src/hri/scripts/flask_server.py#L97">stop</a> endpoint:</p>
+<pre><code class="language-python">@app.route(&quot;/stop&quot;, methods=[&quot;POST&quot;])
+def stop_robot():
+    global ros_sender
+    ros_sender.send(&quot;shutdown&quot;)
+    return jsonify({&quot;message&quot;: &quot;Robot was shutdown&quot;})
+</code></pre>
+<p>Then the programmer can define what to do with the data, like sending it to the ROS Node using the <a href="#connection-to-ros-node">TCP/IP client</a>.</p>
+<h3 id="connection-to-ros-node">Connection to ROS Node</h3>
+<p>This is possible by using a TCP/IP server and client in both the Flask API and ROS Node, so that both modules can send and receive data.</p>
+<p>In the following <a href="https://github.com/RoBorregos/robocup-home/blob/feature/HRISetup/catkin_home/src/hri/scripts/flask_server.py#L41">piece of code</a> received messages are handled:</p>
+<pre><code class="language-python"># Decode messages and send them to the appropriate socket channel.
+def ros_receive_handler():
+    while True:
+        if ros_receiver is None:
+            # Avoid blocking the process before initialization.
+            socketio.sleep(0.01)
+            continue
+        # Only call `recv` when we're sure there's a new message since
+        # it is a blocking call.
+        if ros_receiver.poll():
+            try:
+                message = ros_receiver.recv()
+            except:
+                # Ignore message if there was an exception.
+                # TODO: We should not do this becuase we could
+                # loose critical messages.
+                rospy.loginfo(&quot;There was an exception&quot;)
+                continue
+
+            if message == &quot;CreateSender&quot;:
+                initialize_ros_sender()
+            elif message == &quot;Close&quot;:
+                cleanup()
+            else:
+                channel = message[&quot;channel&quot;]
+                value = message[&quot;value&quot;]
+                socketio.emit(
+                    channel,
+                    value if type(value) == str else json.dumps(value)
+                )
+        else:
+            # Only throttle if there are no available messages.
+            socketio.sleep(0.01)
+
+</code></pre>
+<p>Note that when a message that needs to be sent to the UI is received it is done using <a href="#sockets">sockets</a>.</p>
+<p>Messages can be sent to using <a href="https://github.com/RoBorregos/robocup-home/blob/feature/HRISetup/catkin_home/src/hri/scripts/flask_server.py#L28"><code>ros_sender</code></a>.</p>
+<p>Example in the <code>/stop</code> endpoint:</p>
+<pre><code class="language-python">@app.route(&quot;/stop&quot;, methods=[&quot;POST&quot;])
+def stop_robot():
+    global ros_sender
+    ros_sender.send(&quot;shutdown&quot;)
+    return jsonify({&quot;message&quot;: &quot;Robot was shutdown&quot;})
+</code></pre>
+<p>When anything is posted to this endpoint a shutdown signal is sent to ROS Node using the client. This needs to be handled by the ROS Node appropriately.</p>
+<h2 id="ros-node">ROS Node</h2>
+<p>This module consists of a ROS Node called hri. The code can be found <a href="https://github.com/RoBorregos/robocup-home/blob/feature/HRISetup/catkin_home/src/hri/scripts/main.py">here</a>.
+The purpose of this node is to listen to messages published to topics related to debugging and then send the data to the <a href="#flask-api">flask API</a> using the TCP/IP client so that it can be sent ultimately to the <a href="#react-web-app">React Web App</a>.</p>
+<p>Currently the node is subscribing to the following topics:</p>
+<ul>
+<li><a href="#robot-info">Robot Info</a></li>
+<li><a href="#robot-video-feed">Robot Video Feed</a></li>
+</ul>
+<h3 id="robot-info">Robot Info</h3>
+<p>Subscription is made to topic <code>/robot_info</code> (<a href="https://github.com/RoBorregos/robocup-home/blob/feature/HRISetup/catkin_home/src/hri/scripts/main.py#L127">source</a>) where <a href="https://github.com/RoBorregos/robocup-home/blob/b72130f379d77607e7c0fdbea30677b9a5b20196/catkin_home/src/hri/msg/RobotStatus.msg">RobotStatus</a> messages are published.
+The structure of RobotStatus:</p>
+<pre><code>Header header
+string[] ActionQueue
+float32[3] SystemHealth
+string RobotStatus
+string[] ActiveModules
+string RobotMessage
+string RobotFace
+</code></pre>
+<p>The following code executes when a new RobotStatus is received:</p>
+<pre><code class="language-python">def robot_info_receive_handler(robot_status):
+    if server_sender is not None:
+        for channel in channels:
+            try:
+                server_sender.send({
+                    &quot;channel&quot;: channel,
+                    &quot;value&quot;: getattr(robot_status, channel)
+                })
+            except:
+                print(&quot;Error fetching: &quot;, channel)
+</code></pre>
+<p>Where <a href="https://github.com/RoBorregos/robocup-home/blob/feature/HRISetup/catkin_home/src/hri/scripts/main.py#L16">channels</a> is defined as:</p>
+<pre><code class="language-python">channels = [
+    &quot;ActionQueue&quot;,
+    &quot;SystemHealth&quot;,
+    &quot;RobotStatus&quot;,
+    &quot;ActiveModules&quot;,
+    &quot;RobotMessage&quot;,
+    &quot;RobotFace&quot;
+]
+</code></pre>
+<p>Note that channels content is the same as the data names defined for RobotStatus, this name must also match the channel name used when listening to the socket, because it will be used also for sending through the socket.
+Sending is made by the <a href="#flask-api">flask server</a>.</p>
+<p><a href="https://github.com/AYM1607/AtHomeHRI/blob/main/src/components/SystemHealthModule.js#L11">Example</a> of receiving through the socket:</p>
+<pre><code class="language-js">  useEffect(() =&gt; {
+    socket.on(SocketChannels.SYSTEM_HEALTH, (data) =&gt;
+      setSystemHealth(JSON.parse(data))
+    );
+    return () =&gt; socket.off(SocketChannels.SYSTEM_HEALTH);
+  }, []);
+
+...
+
+export const SocketChannels = {
+  SYSTEM_HEALTH: &quot;SystemHealth&quot;,
+  ACTIVE_MODULES: &quot;ActiveModules&quot;,
+};
+
+</code></pre>
+<p>Note that SystemHealth matches the name used by the ROS Node from channels and RobotStatus message.</p>
+<h3 id="robot-video-feed">Robot Video Feed</h3>
+<p>Subscription is made to topic <code>/robot_video_feed</code> (<a href="https://github.com/RoBorregos/robocup-home/blob/feature/HRISetup/catkin_home/src/hri/scripts/main.py#L129">source</a>) where Video messages are published.</p>
+<p>This was implemented as a different topic than <code>/robot_info</code> so that video feed can be handled independently from simple debug data. </p>
+<p>The following <a href="https://github.com/RoBorregos/robocup-home/blob/feature/HRISetup/catkin_home/src/hri/scripts/main.py#L94">code</a> executes when a new video feed is published:</p>
+<pre><code class="language-python">def robot_video_feed_receive_handler(image_msg):
+    if server_sender is not None:
+        img = bridge.imgmsg_to_cv2(image_msg, desired_encoding=&quot;passthrough&quot;)
+        _, img_buffer = cv2.imencode('.jpg', img)
+        img_text = base64.b64encode(img_buffer)
+        server_sender.send({
+            &quot;channel&quot;: &quot;CameraFeed&quot;,
+            &quot;value&quot;: img_text.decode(&quot;ascii&quot;)
+        })
+</code></pre>
+<p>It is then sent to the <a href="#flask-api">Flask API</a> so that it can be sent ultimately to the <a href="#react-web-app">React Web App</a>.</p>
+<p><a href="https://github.com/AYM1607/AtHomeHRI/blob/main/src/components/CameraFeed.js#L9">Example</a> of this message being used in the UI:</p>
+<pre><code class="language-js">export default function CameraFeed() {
+  const [image, setImage] = useState(null);
+
+  useEffect(() =&gt; {
+    socket.on(&quot;CameraFeed&quot;, setImage);
+    return () =&gt; socket.off(&quot;CameraFeed&quot;);
+  }, []);
+
+  return (
+    &lt;Box shadow=&quot;lg&quot; p=&quot;4&quot; borderRadius=&quot;lg&quot; maxW=&quot;600px&quot;&gt;
+      &lt;Text fontSize=&quot;2xl&quot; mb=&quot;4&quot;&gt;
+        Camera feed
+      &lt;/Text&gt;
+      {image &amp;&amp; &lt;img src={`data:image/jpg;base64,${image}`} /&gt;}
+    &lt;/Box&gt;
+  );
+}
+</code></pre>
+<p>Note that <code>'CameraFeed'</code> is being used to listen for image feed using the socket.
+Mote at <a href="#camera-feed">Camera Feed</a>.</p>
+<h3 id="test-node-publisher">Test Node Publisher</h3>
+<p>This module is not part of the system but is used to test it and show an example on how to collect and send data to the UI.</p>
+<p>The code can be found <a href="https://github.com/RoBorregos/robocup-home/blob/feature/HRISetup/catkin_home/src/hri/scripts/test_publisher.py">here</a>.</p>
+<p>This module consists of a ROS Node called <code>test_hri_publisher</code> that publishes to two topics:</p>
+<ul>
+<li><code>/robot_info</code></li>
+<li><code>/robot_video_feed</code></li>
+</ul>
+<p>The same flow must be followed to publish messages for the UI to show, but collected data must be real and where, when and why it is published is determined by the user.</p>
+<h4 id="robot-info_1">Robot Info</h4>
+<p>The following is executed periodically publishing to <code>/robot_info</code>.</p>
+<pre><code class="language-python">def status_publisher():
+    rospy.loginfo(&quot;Starting status publisher&quot;)
+    info_pub = rospy.Publisher(&quot;/robot_info&quot;, RobotStatus, queue_size=10)
+    rate = rospy.Rate(1/3)
+    try:
+        while not rospy.is_shutdown():
+            # Publish robot status.
+            message = RobotStatus()
+            # Set active modules.
+            active_robot_modules = []
+            for module in robot_modules:
+                if bool(random.getrandbits(1)):
+                    active_robot_modules.append(module)
+            message.ActiveModules = active_robot_modules
+            # Set system health.
+            message.SystemHealth = [
+                # Battery.
+                float(85 + int(random.getrandbits(4))),
+                # CPU.
+                float(random.getrandbits(4)),
+                # RAM.
+                float(random.getrandbits(4)),
+            ]
+            # TODO: add values to the rest of the message.
+            info_pub.publish(message)
+            rate.sleep()
+    except:
+        pass
+</code></pre>
+<p>Remembering RobotStatus structure:</p>
+<pre><code>Header header
+string[] ActionQueue
+float32[3] SystemHealth
+string RobotStatus
+string[] ActiveModules
+string RobotMessage
+string RobotFace
+</code></pre>
+<p>ActiveModules field is an array of the currently active robot modules from the following list:</p>
+<pre><code>robot_modules = [
+    &quot;speech&quot;,
+    &quot;nlu&quot;,
+    &quot;navigation&quot;,
+    &quot;object_recognition&quot;,
+    &quot;person_recognition&quot;,
+    &quot;mechanism_control&quot;,
+    &quot;main_engine&quot;
+]
+</code></pre>
+<p>The test publisher randomly select robot modules to be markes as active in the UI. This is then sent to the <a href="#flask-api">Flask API</a> to be redirected to the UI using sockets.</p>
+<p>In <a href="#active-robot-modules">this component</a> an example of how the data obtained through the socket is used to render the active modules in a user friendly way.</p>
+<p>The case of SystemHealth can also be found in the test publisher. This field is defined as an array of floats of size 3, and it is also filled with random data:</p>
+<pre><code class="language-python">    # Set system health.
+    message.SystemHealth = [
+        # Battery.
+        float(85 + int(random.getrandbits(4))),
+        # CPU.
+        float(random.getrandbits(4)),
+        # RAM.
+        float(random.getrandbits(4)),
+    ]
+</code></pre>
+<p>This data is then sent to the UI through the system and used in the <a href="#system-health">System Health Component</a></p>
+<h4 id="robot-video-feed_1">Robot Video Feed</h4>
+<p>This publisher reads from the camera using open cv and then publishes it to <code>robot_video_feed</code> topic.</p>
+<pre><code class="language-python">def video_publisher():
+    rospy.loginfo(&quot;Starting video publisher&quot;)
+    image_pub = rospy.Publisher(&quot;/robot_video_feed&quot;, Image, queue_size=10)
+    rate = rospy.Rate(10)
+    try:
+        while not rospy.is_shutdown():
+            # Publish video feed.
+            _, img = vid.read()
+            image_message = bridge.cv2_to_imgmsg(img, encoding=&quot;passthrough&quot;)
+            image_pub.publish(image_message)
+            rate.sleep()
+    except:
+        pass
+</code></pre>
+<p>Then it is received by the ROS Node listener and sent to the UI through the <a href="#flask-api">Flask Api</a>. </p>
+<p>Example of how this data is used can be found in the <a href="#camera-feed">Camera Feed Component</a>.</p>
+<h3 id="implementing-new-component-backend">Implementing new component backend</h3>
+<p>This consists of setting up data collection, and setting up the channel to send it.</p>
+<p>It can be possible by doing this simple stesps:</p>
+<ol>
+<li>Adding new field to <a href="https://github.com/RoBorregos/robocup-home/blob/feature/HRISetup/catkin_home/src/hri/msg/RobotStatus.msg">RobotStatus</a> message. More info about supported datatypes <a href="http://wiki.ros.org/msg#Fields">here</a>.</li>
+<li>Adding new field name to <code>channels</code> <a href="https://github.com/RoBorregos/robocup-home/blob/feature/HRISetup/catkin_home/src/hri/scripts/main.py#L16">here</a>.</li>
+<li>Collecting real time data and publishing it to <code>/robot_info</code> so that it can be sent by the <a href="#ros-node">ROS Node</a> to the <a href="#flask-api">Flask API</a> and ultimately to the <a href="#react-web-app">React Web App</a>.</li>
+</ol>
+<p>This implements only the backend, to setup the front end check out: <a href="#creating-a-component">Creating a component</a></p>
+
+
+</section>
+
+</div> <!-- end of page-inner -->
+</div> <!-- end of page-wrapper -->
+
+</div> <!-- end of body-inner -->
+
+</div> <!-- end of book-body -->
+<script src="../js/main.js"></script>
+<script src="../search/main.js"></script>
+<script src="../js/gitbook.min.js"></script>
+<script src="../js/theme.min.js"></script>
+<script>hljs.highlightAll();</script>
+</body>
+</html>
